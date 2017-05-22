@@ -36,7 +36,7 @@ public class ThreadInput extends Thread
 		try {
 			HttpServer httpServer = HttpServer.create(new InetSocketAddress(Main.get("hostname"), Main.getAsInt("port")), Main.getAsInt("backlog"));
 			HttpContext context = httpServer.createContext("/", e -> {
-				System.err.println("Access: " + e.getRequestURI() + " " + e.getRemoteAddress());
+				boolean canceled = false;
 
 				if (e.getRequestURI().getPath().toString().matches("/api(|/.*)")) {
 
@@ -51,6 +51,9 @@ public class ThreadInput extends Thread
 									t.getY().type,
 									t.getY().line))
 								.collect(Collectors.joining())));
+					} else if (e.getRequestURI().getPath().toString().matches("/api/logs")) {
+						canceled = true;
+						send(e, "" + Main.lines.size());
 					} else if (e.getRequestURI().getPath().toString().matches("/api/send")) {
 						String query = e.getRequestURI().getQuery();
 						if (query == null) {
@@ -71,6 +74,7 @@ public class ThreadInput extends Thread
 					sendFile(e, ThreadInput.class.getResource("html" + e.getRequestURI().getPath()));
 				}
 
+				if (!canceled) System.err.println("Access: " + e.getRequestURI() + " " + e.getRemoteAddress());
 			});
 			if (Main.getAsBoolean("needAuthentication")) {
 				context.setAuthenticator(new BasicAuthenticator("Controller") {

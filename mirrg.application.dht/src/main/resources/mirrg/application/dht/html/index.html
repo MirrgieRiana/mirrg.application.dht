@@ -8,6 +8,8 @@
 	var commandHistoryIndex = commandHistory.length;
 	var commandNew = "";
 
+	var lastLogs = -1;
+
 	$(function() {
 		setTimeout(refresh, 10);
 		setInterval(refresh, 5000);
@@ -39,13 +41,25 @@
 		});
 	});
 	function refresh() {
-		$("#frame")[0].contentDocument.location.reload(true)
-		if ($("#autoScroll").prop('checked')) {
-			setTimeout(function() {
-				$("#frame").contents().scrollTop(99999);
-			}, 100);
-			//$("#frame").contents().ready();
-		}
+		refreshImpl(false);
+	};
+	function refreshForce() {
+		refreshImpl(true);
+	};
+	function refreshImpl(force) {
+		$.get("/api/logs", {}, function(data) {
+			if (force || lastLogs < data) {
+				lastLogs = data * 1;
+
+				$("#frame")[0].contentDocument.location.reload(true)
+				if ($("#autoScroll").prop('checked')) {
+					setTimeout(function() {
+						$("#frame").contents().scrollTop(99999);
+					}, 100);
+					//$("#frame").contents().ready();
+				}
+			}
+		});
 	};
 	function send(command) {
 		$.get("/api/send?" + command, {}, function(data) {
@@ -92,7 +106,7 @@ html, body, table, iframe {
 			<td colspan="3"><iframe id="frame" src="/api/log"> </iframe></td>
 		</tr>
 		<tr style="height: 0;">
-			<td><input type="button" value="更新" onclick='refresh();'> <input type="text" style="width: 300px;" id="command" value="say hello"> <input type="button" value="送信"
+			<td><input type="button" value="更新" onclick='refreshForce();'> <input type="text" style="width: 300px;" id="command" value="say hello"> <input type="button" value="送信"
 				onclick='submit()'> <span id="status"></span></td>
 			<td style="text-align: right;"><input type="checkbox" checked="checked" id="autoScroll"><label for="autoScroll">自動スクロール</label> <input type="button" value="save-all"
 				onclick='send("save-all");'> <input type="button" value="stop" onclick='if (confirm("サーバーを止めますか？")) send("stop");'> mirrg.application.dht</td>
