@@ -53,7 +53,7 @@ public class ThreadInput extends Thread
 								.collect(Collectors.joining())));
 					} else if (e.getRequestURI().getPath().toString().matches("/api/log/count")) {
 						canceled = true;
-						send(e, "" + Main.logLines.size());
+						send(e, "" + Main.logLineCount);
 					} else if (e.getRequestURI().getPath().toString().matches("/api/send")) {
 						String query = e.getRequestURI().getQuery();
 						if (query == null) {
