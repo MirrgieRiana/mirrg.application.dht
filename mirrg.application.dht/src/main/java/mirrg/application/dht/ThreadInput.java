@@ -36,6 +36,7 @@ public class ThreadInput extends Thread
 		try {
 			HttpServer httpServer = HttpServer.create(new InetSocketAddress(Main.get("hostname"), Main.getAsInt("port")), Main.getAsInt("backlog"));
 			HttpContext context = httpServer.createContext("/", e -> {
+				System.err.println("Access: " + e.getRequestURI() + " " + e.getRemoteAddress());
 
 				if (e.getRequestURI().getPath().toString().matches("/api(|/.*)")) {
 
@@ -55,6 +56,7 @@ public class ThreadInput extends Thread
 						if (query == null) {
 							send(e, 400, "400");
 						} else {
+							System.err.println("Command: " + query);
 							Main.push(new Entry(color, getName().toUpperCase(), query));
 							out.println(query);
 							send(e, "Success[" + query + "]");
