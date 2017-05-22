@@ -47,7 +47,7 @@
 		refreshImpl(true);
 	};
 	function refreshImpl(force) {
-		$.get("/api/logs", {}, function(data) {
+		$.get("/api/log/count", {}, function(data) {
 			if (force || lastLogs < data) {
 				lastLogs = data * 1;
 

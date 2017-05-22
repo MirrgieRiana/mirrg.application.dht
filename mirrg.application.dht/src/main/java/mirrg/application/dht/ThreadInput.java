@@ -43,7 +43,7 @@ public class ThreadInput extends Thread
 					if (e.getRequestURI().getPath().toString().matches("/api/log")) {
 						send(e, String.format(
 							"<table style='font-family: monospace; white-space: nowrap;'>%s</table>",
-							Main.lines.stream()
+							Main.logLines.stream()
 								.map(t -> String.format(
 									"<tr style=\"color: %s;\"><td>%s</td><td><b>%s</b></td><td>%s</td></tr>",
 									t.getY().color,
@@ -51,9 +51,9 @@ public class ThreadInput extends Thread
 									t.getY().type,
 									t.getY().line))
 								.collect(Collectors.joining())));
-					} else if (e.getRequestURI().getPath().toString().matches("/api/logs")) {
+					} else if (e.getRequestURI().getPath().toString().matches("/api/log/count")) {
 						canceled = true;
-						send(e, "" + Main.lines.size());
+						send(e, "" + Main.logLines.size());
 					} else if (e.getRequestURI().getPath().toString().matches("/api/send")) {
 						String query = e.getRequestURI().getQuery();
 						if (query == null) {

@@ -37,15 +37,15 @@ public class Main
 
 	//
 
-	private static final int LOG_LINES = 500;
-	public static LinkedList<Tuple<Integer, Entry>> lines = new LinkedList<>();
-	private static int count = 0;
+	private static final int VISIBLE_LOG_LINE_COUNT = 500;
+	public static LinkedList<Tuple<Integer, Entry>> logLines = new LinkedList<>();
+	public static int logLineCount = 0;
 
 	public static void push(Entry y)
 	{
-		lines.addLast(new Tuple<>(count, y));
-		count++;
-		if (lines.size() > LOG_LINES) lines.removeFirst();
+		logLines.addLast(new Tuple<>(logLineCount, y));
+		logLineCount++;
+		if (logLines.size() > VISIBLE_LOG_LINE_COUNT) logLines.removeFirst();
 		System.out.println("[" + y.type + "] " + y.line);
 	}
 
