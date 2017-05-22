@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="jquery-3.2.1.min.js"></script>
+<script>
+	var commandHistory = [ "save-all" ];
+	var commandHistoryIndex = commandHistory.length;
+	var commandNew = "";
+
+	$(function() {
+		setTimeout(refresh, 10);
+		setInterval(refresh, 5000);
+		$("#command").keydown(function() {
+			if (event.keyCode == 13) {
+				submit();
+			} else if (event.keyCode == 38) {
+				if (commandHistoryIndex == commandHistory.length) {
+					commandNew = $("#command").val();
+				}
+				if (commandHistoryIndex > 0) {
+					commandHistoryIndex--;
+				}
+				$("#command").val(commandHistory[commandHistoryIndex]);
+			} else if (event.keyCode == 40) {
+				if (commandHistoryIndex == commandHistory.length) {
+
+				} else {
+					if (commandHistoryIndex < commandHistory.length) {
+						commandHistoryIndex++;
+					}
+					if (commandHistoryIndex == commandHistory.length) {
+						$("#command").val(commandNew);
+					} else {
+						$("#command").val(commandHistory[commandHistoryIndex]);
+					}
+				}
+			}
+		});
+	});
+	function refresh() {
+		$("#frame")[0].contentDocument.location.reload(true)
+		if ($("#autoScroll").prop('checked')) {
+			setTimeout(function() {
+				$("#frame").contents().scrollTop(99999);
+			}, 100);
+			//$("#frame").contents().ready();
+		}
+	};
+	function send(command) {
+		$.get("/api/send?" + command, {}, function(data) {
+			setTimeout(refresh, 200);
+		});
+		setStatus("send: " + command);
+	}
+	function submit() {
+		if ($("#command").val() != "") {
+			if (commandHistory[commandHistory.length - 1] != $("#command")
+					.val()) {
+				commandHistory.push($("#command").val());
+			}
+			commandHistoryIndex = commandHistory.length;
+
+			send($("#command").val());
+			$("#command").val("");
+		} else {
+			setStatus("コマンドが空です。");
+		}
+	}
+	function setStatus(text) {
+		$("#status").text(text);
+		$("#status").css(
+				"color",
+				"rgb(" + Math.floor(Math.random() * 128) + ", "
+						+ Math.floor(Math.random() * 128) + ", "
+						+ Math.floor(Math.random() * 128) + ")");
+	}
+</script>
+<style>
+html, body, table, iframe {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	box-sizing: border-box;
+}
+</style>
+</head>
+
+<body>
+	<table>
+		<tr>
+			<td colspan="3"><iframe id="frame" src="/api/log"> </iframe></td>
+		</tr>
+		<tr style="height: 0;">
+			<td><input type="button" value="更新" onclick='refresh();'> <input type="text" style="width: 300px;" id="command"> <input type="button" value="送信" onclick='submit()'> <span
+				id="status"></span></td>
+			<td style="text-align: right;"><input type="checkbox" checked="checked" id="autoScroll"><label for="autoScroll">自動スクロール</label> <input type="button" value="save-all"
+				onclick='send("save-all");'> <input type="button" value="save-all" onclick='send("save-all");'> <input type="button" value="stop"
+				onclick='if (confirm("サーバーを止めますか？")) send("stop");'> mirrg.dht</td>
+		</tr>
+	</table>
+</body>
+</html>
