@@ -1,10 +1,10 @@
-# mirrg.template
+# mirrg.application.dht
 
-- Repo: `https://raw.githubusercontent.com/MirrgieRiana/mirrg.template/master/maven`
+- Repo: `https://raw.githubusercontent.com/MirrgieRiana/mirrg.application.dht/master/maven`
 - Artifacts
-  - `mirrg:mirrg.template:+`
+  - `mirrg:mirrg.application.dht:+`
 
-## mirrg.template
+## mirrg.application.dht
 
 ### 説明
 
@@ -12,7 +12,7 @@
 
 ### エントリーポイント
 
-- `mirrg.template.Template`
+- `mirrg.application.dht.Main`
 
 ### 機能
 

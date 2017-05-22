@@ -10,7 +10,7 @@ apply plugin: 'maven'
 project.group = 'mirrg'
 
 // ★成果物のID
-project.archivesBaseName = 'mirrg.template'
+project.archivesBaseName = 'mirrg.application.dht'
 
 // ★成果物のバージョン
 def superversion = '0' // 破壊的なバージョン変更
