@@ -20,7 +20,10 @@ def subversion = '0.1' // 破壊的でないバージョン変更
 dependencies {
 
 	testCompile group: 'junit', name: 'junit', version: '4.+'
+	compile group: 'mirrg', name: 'mirrg.helium.standard.hydrogen.struct', version: '0.0.1+'
+	compile group: 'mirrg', name: 'mirrg.helium.standard.hydrogen.event', version: '0.0.1+'
 
+	'https://raw.githubusercontent.com/MirrgieRiana/mirrg.helium.standard/master/maven',
 	//compile group: 'mirrg', name: 'mirrg.struct.hydrogen', version: '2.0.0'
 	//compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	//compile group: 'mirrg', name: 'mirrg.struct.hydrogen-1.0', version: '+'
@@ -36,18 +39,18 @@ def mavenRepositories = [
 ]
 
 // ★実行可能Jar
-def mainClass = null
+def mainClass = "mirrg.application.dht.Main"
 
 def outputLocation =
 
 	// ★'../maven'にMavenプロジェクトとして出力する場合
-	'maven'
+	//'maven'
 
 	// ★'../repos'にJarを出力する場合
-	//'dir'
+	'dir'
 
 // ★まとまったJarとして出力する
-def allInOne = false
+def allInOne = true
 
 //////////////////////////////////////////////////////////////////////
 
