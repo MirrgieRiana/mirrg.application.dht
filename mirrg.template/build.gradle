@@ -1,0 +1,146 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+//////////////////////////////////////////////////////////////////////
+
+// Eclipseの「設定」→「Gradle」→「引数」→「Java ホーム」を「ワークスペース JRE: java8」に
+
+// ★グループId
+project.group = 'mirrg'
+
+// ★成果物のID
+project.archivesBaseName = 'mirrg.template'
+
+// ★成果物のバージョン
+def superversion = '0' // 破壊的なバージョン変更
+def subversion = '0.1' // 破壊的でないバージョン変更
+
+// ★依存関係
+dependencies {
+
+	testCompile group: 'junit', name: 'junit', version: '4.+'
+
+	//compile group: 'mirrg', name: 'mirrg.struct.hydrogen', version: '2.0.0'
+	//compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+	//compile group: 'mirrg', name: 'mirrg.struct.hydrogen-1.0', version: '+'
+
+}
+
+// ★追加のリポジトリURL
+def mavenRepositories = [
+
+	//'https://raw.githubusercontent.com/MirrgieRiana/mirrg.struct.hydrogen/master/maven',
+	//'http://hg.pf.osdn.jp/view/t/ta/tacticsrealize/mirrg.struct.hydrogen/raw-file/tip/maven',
+
+]
+
+// ★実行可能Jar
+def mainClass = null
+
+def outputLocation =
+
+	// ★'../maven'にMavenプロジェクトとして出力する場合
+	'maven'
+
+	// ★'../repos'にJarを出力する場合
+	//'dir'
+
+// ★まとまったJarとして出力する
+def allInOne = false
+
+//////////////////////////////////////////////////////////////////////
+
+version = superversion + "." + subversion
+
+// Javaコンパイル設定
+
+	// ソースのJava準拠指定
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+
+	// ソースのエンコーディング指定
+	tasks.withType(AbstractCompile)*.options*.encoding = tasks.withType(GroovyCompile)*.groovyOptions*.encoding = 'UTF-8'
+
+// Meta-Info
+jar {
+	manifest {
+
+		// Mainクラス指定
+		if (mainClass != null) attributes 'Main-Class' : mainClass
+
+		attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
+
+	}
+};
+
+// ソースとJavadocを成果物に含める
+
+	task sourcesJar(type: Jar, dependsOn:classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+
+	task javadocJar(type: Jar, dependsOn:javadoc) {
+		classifier = 'javadoc'
+		from javadoc.destinationDir
+	}
+
+	javadoc {
+		options.charSet = 'UTF-8'
+		options.encoding = 'UTF-8'
+	}
+
+	artifacts {
+		archives sourcesJar
+		archives javadocJar
+	}
+
+// 追加のMavenリポジトリURL設定
+repositories {
+	mavenCentral()
+	maven {
+		url '../maven'
+	}
+
+	mavenRepositories.each {
+		def a = it
+		maven {
+			url a
+		}
+	}
+
+}
+
+/*
+test {
+	systemProperties 'property': 'value'
+}
+*/
+
+// 成果物の出力先
+uploadArchives {
+	repositories {
+
+		if (outputLocation == 'dir') {
+			flatDir {
+				dirs '../repos'
+			}
+		}
+
+		if (outputLocation == 'maven') {
+			mavenDeployer {
+				pom.artifactId = project.archivesBaseName
+				repository(url: 'file://localhost/' + file('../maven').getAbsolutePath())
+			}
+		}
+
+	}
+}
+
+// 依存Jarを同封
+if (allInOne) {
+	jar {
+		from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}
