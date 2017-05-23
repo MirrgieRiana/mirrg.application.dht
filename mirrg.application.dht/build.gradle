@@ -14,7 +14,7 @@ project.archivesBaseName = 'mirrg.application.dht'
 
 // ★成果物のバージョン
 def superversion = '0' // 破壊的なバージョン変更
-def subversion = '0.2' // 破壊的でないバージョン変更
+def subversion = '0.3' // 破壊的でないバージョン変更
 
 // ★依存関係
 dependencies {
